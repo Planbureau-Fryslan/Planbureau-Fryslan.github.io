@@ -1,0 +1,30 @@
+#themascontainer {
+	width: 1000px;
+	overflow-x: scroll;
+}
+#themas {
+	display: flex;
+	align-items: center;
+}
+.thema_button {
+	background-color: #66a1ac;
+	color: white;
+	font-size: 15px;
+	font-weight: bold;
+	height: 50px;
+	width: 150px;
+	border: 1px solid white;
+	display: inline-block;
+	padding: 10px;
+}
+.thema_button.active {
+	background-color: #006374;
+}
+
+.tableauContainer {
+	position: absolute;
+	left: -1500px;
+}
+.tableauContainer.active {
+	position: static;
+}
