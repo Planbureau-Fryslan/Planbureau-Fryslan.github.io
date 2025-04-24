@@ -1,6 +1,5 @@
 const $ = query => document.querySelector(query), $$ = query => document.querySelectorAll(query)
 const dashboards = [{"name":"Bevolkingsontwikkeling","caption":"Bevolkings-ontwikkeling","height":800},{"name":"Bevolking","caption":"Bevolking","height":600},{"name":"Werk","caption":"Werk","height":1000},{"name":"Inkomen","caption":"Inkomen","height":870},{"name":"Onderwijs","caption":"Onderwijs","height":770},{"name":"Welzijn","caption":"Welzijn","height":760},{"name":"Gezondheid","caption":"Gezondheid","height":880},{"name":"Socialesamenhang","caption":"Sociale samenhang","height":800},{"name":"Veiligheid","caption":"Veiligheid","height":670},{"name":"Bereikbaarheid","caption":"Bereikbaarheid","height":1000},{"name":"Natuurenlandschap","caption":"Natuur en landschap","height":1000},{"name":"Klimaatenmilieu","caption":"Klimaat en milieu","height":760},{"name":"Wonen","caption":"Wonen","height":700},{"name":"Vrijetijd","caption":"Vrije tijd","height":1000}]
-$('#themas').style.width = `${150*dashboards.length}px`
 
 function switch_view(name) {
 	$$('.active').forEach((node,index) => {node.classList.remove('active')})
@@ -9,6 +8,7 @@ function switch_view(name) {
 }
 
 function LidR_setup(regio) {
+	$('#themas').style.width = `${150*dashboards.length}px`
 	for (let dashboard of dashboards) {
 		$('#themas').innerHTML += `<div class="thema_button" onclick="switch_view('${dashboard.name}')" id="button_${dashboard.name}">${dashboard.caption}</div>`
 		$('#dashboard').innerHTML += `<div class='tableauContainer' id='tableau_${dashboard.name}'>
