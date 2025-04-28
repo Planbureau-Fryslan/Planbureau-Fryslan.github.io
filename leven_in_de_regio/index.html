@@ -8,6 +8,9 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 	<style type="text/css">
+		body {
+			font-family: Arial;
+		}
 		#map {
 			height: 100vh;
 			background-color: rgba(0,0,0,0);
@@ -88,7 +91,7 @@
 		function addFeatureActions(feature, layer) {
 			if (feature.properties && feature.properties.regio_label) {
 				// Shape aanklikken -> Naar pagina voor die regio
-				layer.on('click', () => window.location.href = '/dashboard.html?regio='+feature.properties.regio_label )
+				layer.on('click', () => window.location.href = 'dashboard.html?regio='+feature.properties.regio_label )
 				// Muis over shape -> Regionaam in tooltip
 				layer.on('mouseover', () => {
 					document.querySelector('#map').title = `Ga naar de pagina voor ${feature.properties.regio_label}`
