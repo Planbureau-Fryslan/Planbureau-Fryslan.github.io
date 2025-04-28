@@ -18,7 +18,7 @@
 		}
 	</style>
 	<script type="text/javascript">
-		let map, polygonlayer, bounds, geo;
+		let map, polygonlayer, bounds;
 
 		function setup() {
 			// Kaart maken met coördinaten midden en zoomlevel die zeer dicht bij de werkelijke waarde liggen
@@ -35,12 +35,23 @@
 			})
 			window.addEventListener('resize', () => map.fitBounds(bounds))
 			fetch('geo.json')
-			.then(d => {
-				return d.json()
-			})
-			.then(d => {
-				geo = d
-				addGeoJSON(geo)
+			.then(d => d.json())
+			.then(geo => {
+				// Kaart passend maken voor werkelijke data
+				const bbox = calculateBBox(geo)
+				bounds = [[bbox[1],bbox[0]],[bbox[3],bbox[2]]]
+				map.fitBounds(bounds)
+
+				// Polygonen toevoegen
+				polygonlayer = L.geoJSON(geo, {
+					onEachFeature: addFeatureActions,
+					style: {
+						color: 'white',
+						weight: 1,
+						fillColor: '#006374',
+						fillOpacity: 1
+					}
+				}).addTo(map)
 			})
 		}
 
@@ -69,24 +80,6 @@
 			const x_border = (maxX - minX)*0.1
 			const y_border = (maxY - minY)*0.1
 			return [minX - x_border, minY - y_border, maxX + x_border, maxY + y_border];
-		}
-
-		function addGeoJSON(geojson) {
-			// Kaart passend maken voor werkelijke data
-			const bbox = calculateBBox(geojson)
-			bounds = [[bbox[1],bbox[0]],[bbox[3],bbox[2]]]
-			map.fitBounds(bounds)
-
-			// Polygonen toevoegen
-			polygonlayer = L.geoJSON(geojson, {
-				onEachFeature: addFeatureActions,
-				style: {
-					color: 'white',
-					weight: 1,
-					fillColor: '#006374',
-					fillOpacity: 1
-				}
-			}).addTo(map)
 		}
 
 		function addFeatureActions(feature, layer) {
