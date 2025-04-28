@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<script type="text/javascript" src="script.js"></script>
+</head>
+<body>
+	<a href="./">Terug</a>
+	<h1 id="gemeente"></h1>
+	<div id="themascontainer"><div id="themas"></div></div>
+	<div id="dashboard"></div>
+	<script>
+		const urlParams = new URLSearchParams(window.location.search);
+		const regio = urlParams.get('regio')
+		document.title = `Gemeente ${regio}`
+		document.getElementById('gemeente').innerHTML = `${regio}`
+		LidR_setup(regio)
+	</script>
+</body>
+</html>

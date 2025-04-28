@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Kaart</title>
+	<!-- Leaflet -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+	<style type="text/css">
+		#map {
+			height: 100vh;
+			background-color: rgba(0,0,0,0);
+		}
+	</style>
+	<script type="text/javascript">
+		let map, polygonlayer, bounds, geo;
+
+		function setup() {
+			// Kaart maken met coördinaten midden en zoomlevel die zeer dicht bij de werkelijke waarde liggen
+			map = L.map('map', {
+				center: [53.159105, 5.636314],
+				zoom: 10,
+				zoomControl: false,
+				dragging: false,
+				boxZoom: false,
+				scrollWheelZoom: false,
+				touchZoom: false,
+				keyboad: false,
+				zoomSnap: 0
+			})
+			window.addEventListener('resize', () => map.fitBounds(bounds))
+			fetch('geo.json')
+			.then(d => {
+				return d.json()
+			})
+			.then(d => {
+				geo = d
+				addGeoJSON(geo)
+			})
+		}
+
+		function calculateBBox(geojson) {
+			let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+			geojson.forEach(feature => {
+				const coords = feature.geometry.coordinates;
+
+				function processCoordinates(coordArray) {
+					coordArray.forEach(coord => {
+						if (Array.isArray(coord[0])) {
+							processCoordinates(coord); // Recursief voor multipolygonen
+						} else {
+							const [x, y] = coord;
+							minX = Math.min(minX, x);
+							minY = Math.min(minY, y);
+							maxX = Math.max(maxX, x);
+							maxY = Math.max(maxY, y);
+						}
+					});
+				}
+
+				processCoordinates(coords);
+			});
+			const x_border = (maxX - minX)*0.1
+			const y_border = (maxY - minY)*0.1
+			return [minX - x_border, minY - y_border, maxX + x_border, maxY + y_border];
+		}
+
+		function addGeoJSON(geojson) {
+			// Kaart passend maken voor werkelijke data
+			const bbox = calculateBBox(geojson)
+			bounds = [[bbox[1],bbox[0]],[bbox[3],bbox[2]]]
+			map.fitBounds(bounds)
+
+			// Polygonen toevoegen
+			polygonlayer = L.geoJSON(geojson, {
+				onEachFeature: addFeatureActions,
+				style: {
+					color: 'white',
+					weight: 1,
+					fillColor: '#006374',
+					fillOpacity: 1
+				}
+			}).addTo(map)
+		}
+
+		function addFeatureActions(feature, layer) {
+			if (feature.properties && feature.properties.regio_label) {
+				// Shape aanklikken -> Naar pagina voor die regio
+				layer.on('click', () => window.location.href = '/dashboard.html?regio='+feature.properties.regio_label )
+				// Muis over shape -> Regionaam in tooltip
+				layer.on('mouseover', () => {
+					document.querySelector('#map').title = `Ga naar de pagina voor ${feature.properties.regio_label}`
+					layer.setStyle({fillColor: '#66a1ac'})
+				})
+				// Muis van shape af -> Tooltip leegmaken
+				layer.on('mouseout', () => {
+					document.querySelector('#map').title = ''
+					layer.setStyle({fillColor: '#006374'})
+				})
+			}
+		}
+	</script>
+</head>
+<body onload="setup()">
+<div id="map"></div>
+</body>
+</html>
