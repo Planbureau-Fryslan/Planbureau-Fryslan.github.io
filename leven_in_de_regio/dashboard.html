@@ -10,9 +10,6 @@
 		body {
 			font-family: Arial;
 		}
-		* {
-			box-sizing: border-box;
-		}
 	</style>
 </head>
 <body>
@@ -24,7 +21,7 @@
 		const urlParams = new URLSearchParams(window.location.search);
 		const regio = urlParams.get('regio')
 		document.title = `Gemeente ${regio}`
-		document.getElementById('gemeente').innerHTML = `${regio}`
+		document.getElementById('gemeente').innerHTML = regio
 		LidR_setup(regio)
 	</script>
 </body>
