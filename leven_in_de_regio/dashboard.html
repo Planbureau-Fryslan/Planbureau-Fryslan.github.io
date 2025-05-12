@@ -10,6 +10,9 @@
 		body {
 			font-family: Arial;
 		}
+		img {
+			width: 1000px;
+		}
 	</style>
 </head>
 <body>
@@ -17,12 +20,16 @@
 	<h1 id="gemeente"></h1>
 	<div id="themascontainer"><div id="themas"></div></div>
 	<div id="dashboard"></div>
+	<div id="bevolkingspiramide"></div>
 	<script>
 		const urlParams = new URLSearchParams(window.location.search);
 		const regio = urlParams.get('regio')
 		document.title = `Gemeente ${regio}`
 		document.getElementById('gemeente').innerHTML = regio
 		LidR_setup(regio)
+		gm_codes = {"Achtkarspelen": "GM0059", "Ameland": "GM0060", "Dantumadiel": "GM1891", "De Fryske Marren": "GM1940", "Harlingen": "GM0072", "Heerenveen": "GM0074", "Leeuwarden": "GM0080", "Noardeast-Fryslân": "GM1970", "Ooststellingwerf": "GM0085", "Opsterland": "GM0086", "Schiermonnikoog": "GM0088", "Smallingerland": "GM0090", "Súdwest-Fryslân": "GM1900", "Terschelling": "GM0093", "Tytsjerksteradiel": "GM0737", "Vlieland": "GM0096", "Waadhoeke": "GM1949", "Weststellingwerf": "GM0098"}
+		const gif_url = `./bevolkingspiramides/bevolkingspiramide_${gm_codes[regio]}_500.gif`
+		$('#bevolkingspiramide').innerHTML = `<br><a href="${gif_url}" target="_blank">Bevolkingspiramide openen in nieuw tabblad</a><br><img src="${gif_url}">`
 	</script>
 </body>
 </html>
