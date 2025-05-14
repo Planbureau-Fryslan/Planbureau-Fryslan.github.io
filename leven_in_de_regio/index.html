@@ -13,7 +13,7 @@
 			margin: 0;
 		}
 		#map {
-			height: 100vh;
+			height: calc(100vh - 21px);
 			background-color: rgba(0,0,0,0);
 		}
 	</style>
@@ -56,14 +56,8 @@
 				// Polygonen toevoegen
 				for (let detailniveau in geo) {
 					document.getElementById('detailniveaus').innerHTML += `<button onclick="toggleLayer('${detailniveau}')">${detailniveau}</button>`
-					for (var i = 0; i < geo[detailniveau].length; i++) {
-						if (beschikbare_regios[detailniveau] == 'Alle') {
-							geo[detailniveau][i].properties.available = true
-						} else if (beschikbare_regios[detailniveau].includes(geo[detailniveau][i].properties.regio_label)) {
-							geo[detailniveau][i].properties.available = true
-						} else {
-							geo[detailniveau][i].properties.available = false
-						}
+					for (let feature of geo[detailniveau]) {
+						feature.properties.available = beschikbare_regios[detailniveau] == 'Alle' || beschikbare_regios[detailniveau].includes(feature.properties.regio_label)
 					}
 					polygonlayers[detailniveau] = L.geoJSON(geo[detailniveau], {
 						onEachFeature: addFeatureActions,
