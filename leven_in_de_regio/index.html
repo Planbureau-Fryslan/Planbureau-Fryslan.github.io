@@ -18,7 +18,15 @@
 		}
 	</style>
 	<script type="text/javascript">
-		let map, polygonlayer, bounds;
+		let detailniveaus, geo, map, polygonlayers = {}, bounds;
+		let beschikbare_regios = {
+			'Gemeente': 'Alle',
+			'COROP-gebied': ['Zuidoost-Friesland']
+		}
+		const fillColors = {
+			'Beschikbaar': {'Standaard': '#006374', 'Hover': '#66a1ac'},
+			'Niet-beschikbaar': {'Standaard': '#e5e7e7', 'Hover': '#eff1f1'}
+		}
 
 		function setup() {
 			// Kaart maken met coördinaten midden en zoomlevel die zeer dicht bij de werkelijke waarde liggen
@@ -36,22 +44,40 @@
 			window.addEventListener('resize', () => map.fitBounds(bounds))
 			fetch('geo.json')
 			.then(d => d.json())
-			.then(geo => {
+			.then(d => {
+				geo = d
+				detailniveaus = Object.keys(geo)
+
 				// Kaart passend maken voor werkelijke data
-				const bbox = calculateBBox(geo)
+				const bbox = calculateBBox(geo[detailniveaus[0]])
 				bounds = [[bbox[1],bbox[0]],[bbox[3],bbox[2]]]
 				map.fitBounds(bounds)
-
+				
 				// Polygonen toevoegen
-				polygonlayer = L.geoJSON(geo, {
-					onEachFeature: addFeatureActions,
-					style: {
-						color: 'white',
-						weight: 1,
-						fillColor: '#006374',
-						fillOpacity: 1
+				for (let detailniveau in geo) {
+					document.getElementById('detailniveaus').innerHTML += `<button onclick="toggleLayer('${detailniveau}')">${detailniveau}</button>`
+					for (var i = 0; i < geo[detailniveau].length; i++) {
+						if (beschikbare_regios[detailniveau] == 'Alle') {
+							geo[detailniveau][i].properties.available = true
+						} else if (beschikbare_regios[detailniveau].includes(geo[detailniveau][i].properties.regio_label)) {
+							geo[detailniveau][i].properties.available = true
+						} else {
+							geo[detailniveau][i].properties.available = false
+						}
 					}
-				}).addTo(map)
+					polygonlayers[detailniveau] = L.geoJSON(geo[detailniveau], {
+						onEachFeature: addFeatureActions,
+						style: feature => {
+							return {
+								color: 'white',
+								weight: 1,
+								fillColor: fillColors[feature.properties.available ? 'Beschikbaar' : 'Niet-beschikbaar']['Standaard'],
+								fillOpacity: 1
+							}
+						}
+					})
+				}
+				polygonlayers[detailniveaus[0]].addTo(map)
 			})
 		}
 
@@ -85,22 +111,32 @@
 		function addFeatureActions(feature, layer) {
 			if (feature.properties && feature.properties.regio_label) {
 				// Shape aanklikken -> Naar pagina voor die regio
-				layer.on('click', () => window.location.href = 'dashboard.html?regio='+feature.properties.regio_label )
+				if (feature.properties.available) {
+					layer.on('click', () => window.location.href = 'dashboard.html?regio='+feature.properties.regio_label )
+				}
 				// Muis over shape -> Regionaam in tooltip
 				layer.on('mouseover', () => {
-					document.querySelector('#map').title = `Ga naar de pagina voor ${feature.properties.regio_label}`
-					layer.setStyle({fillColor: '#66a1ac'})
+					document.querySelector('#map').title = feature.properties.available ? `Ga naar de pagina voor ${feature.properties.regio_label}` : `Er is geen dashboard beschikbaar voor ${feature.properties.regio_label}`
+					layer.setStyle({fillColor: fillColors[feature.properties.available ? 'Beschikbaar' : 'Niet-beschikbaar']['Hover']})
 				})
 				// Muis van shape af -> Tooltip leegmaken
 				layer.on('mouseout', () => {
 					document.querySelector('#map').title = ''
-					layer.setStyle({fillColor: '#006374'})
+					layer.setStyle({fillColor: fillColors[feature.properties.available ? 'Beschikbaar' : 'Niet-beschikbaar']['Standaard']})
 				})
 			}
+		}
+
+		function toggleLayer(detailniveau) {
+			for (const d of detailniveaus) {
+				polygonlayers[d].remove()
+			}
+			polygonlayers[detailniveau].addTo(map)
 		}
 	</script>
 </head>
 <body onload="setup()">
-<div id="map"></div>
+	<div id="detailniveaus"></div>
+	<div id="map"></div>
 </body>
 </html>
