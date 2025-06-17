@@ -8,7 +8,8 @@ function switch_view(name) {
 }
 
 function LidR_setup(regio) {
-	$('#themas').style.width = `${150*dashboards.length}px`
+	const num_dashboards = ['Vlieland','Terschelling','Ameland','Schiermonnikoog'].includes(regio) ? dashboards.length - 1 : dashboards.length
+	$('#themas').style.width = `${150*num_dashboards}px`
 	for (let dashboard of dashboards) {
 		if (['Vlieland','Terschelling','Ameland','Schiermonnikoog'].includes(regio) && ['Vrijetijd'].includes(dashboard.name)) {
 			continue
