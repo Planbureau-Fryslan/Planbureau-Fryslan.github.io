@@ -9,7 +9,6 @@ const fillColors = {
 }
 
 function kaart_setup() {
-	
 	map = L.map('map', {
 		center: [53.159105, 5.636314],
 		zoom: 10,
@@ -81,17 +80,13 @@ function calculateBBox(geojson) {
 }
 
 function addFeatureActions(feature, layer) {
-	console.log(feature)
-	console.log(layer)
 	if (feature.properties && feature.properties.regio_label) {
-		console.log(feature.properties)
 		// Shape aanklikken -> Naar pagina voor die regio
 		if (feature.properties.available) {
-			layer.on('click', () => window.location.href = feature.properties.regio_label )
+			layer.on('click', () => window.location.href = feature.properties.regio_label.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ /g,'-').toLowerCase() )
 		}
 		// Muis over shape -> Regionaam in tooltip
 		layer.on('mouseover', () => {
-			console.log(feature,layer)
 			document.querySelector('#map').title = feature.properties.available ? `Ga naar de pagina voor ${feature.properties.regio_label}` : `Er is geen dashboard beschikbaar voor ${feature.properties.regio_label}`
 			layer.setStyle({fillColor: fillColors[feature.properties.available ? 'Beschikbaar' : 'Niet-beschikbaar']['Hover']})
 		})
