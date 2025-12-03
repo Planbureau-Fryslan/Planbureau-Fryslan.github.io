@@ -20,7 +20,7 @@ function kaart_setup() {
 		keyboad: false,
 		zoomSnap: 0
 	})
-	window.addEventListener('resize', () => map.fitBounds(bounds))
+	window.addEventListener('resize', () => setTimeout(() => map.fitBounds(bounds), 10)
 	fetch('https://planbureau-fryslan.github.io/leven_in_de_regio/geo.json')
 	.then(d => d.json())
 	.then(d => {
