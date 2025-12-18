@@ -4,7 +4,7 @@ const beschikbare_regios = {
 	'COROP-gebied': ['Zuidoost-Friesland']
 }
 const fillColors = {
-	'Beschikbaar': {'Standaard': '#006374', 'Hover': '#66a1ac'},
+	'Beschikbaar': {'Standaard': '#4C3D89', 'Hover': '#8D81B7'},
 	'Niet-beschikbaar': {'Standaard': '#e5e7e7', 'Hover': '#eff1f1'}
 }
 
