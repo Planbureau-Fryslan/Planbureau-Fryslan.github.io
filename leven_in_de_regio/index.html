@@ -21,7 +21,7 @@
 		let detailniveaus, geo, map, polygonlayers = {}, bounds;
 		let beschikbare_regios = {
 			'Gemeente': 'Alle',
-			'COROP-gebied': ['Zuidoost-Friesland']
+			'Streek': 'Alle'
 		}
 		const fillColors = {
 			'Beschikbaar': {'Standaard': '#006374', 'Hover': '#66a1ac'},
@@ -71,7 +71,12 @@
 						}
 					})
 				}
-				polygonlayers[detailniveaus[0]].addTo(map)
+				const urlParams = new URLSearchParams(window.location.search);
+				if (urlParams.has('detailniveau')) {
+					polygonlayers[urlParams.get('detailniveau')].addTo(map)
+				} else {
+					polygonlayers[detailniveaus[0]].addTo(map)
+				}
 			})
 		}
 
@@ -106,7 +111,7 @@
 			if (feature.properties && feature.properties.regio_label) {
 				// Shape aanklikken -> Naar pagina voor die regio
 				if (feature.properties.available) {
-					layer.on('click', () => window.location.href = 'dashboard.html?regio='+feature.properties.regio_label )
+					layer.on('click', () => window.location.href = `dashboard.html?detailniveau=${feature.properties.regio_detailniveau}&regio=${feature.properties.regio_label}` )
 				}
 				// Muis over shape -> Regionaam in tooltip
 				layer.on('mouseover', () => {
