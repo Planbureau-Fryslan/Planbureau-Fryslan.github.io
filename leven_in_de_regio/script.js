@@ -8,7 +8,7 @@ function switch_view(name) {
 }
 
 function LidR_setup(regio) {
-	dashboard_laden(regio, '20251204LidRDashboard')
+	dashboard_laden(regio, '20260114LidRDashboard')
 }
 
 function dashboard_laden(regio, workbookname) {
