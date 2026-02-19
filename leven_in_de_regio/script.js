@@ -14,14 +14,25 @@ function LidR_setup(regio) {
 function dashboard_laden(regio, workbookname) {
 	const num_dashboards = ['Vlieland','Terschelling','Ameland','Schiermonnikoog'].includes(regio) ? dashboards.length - 1 : dashboards.length
 	$('#themas').style.width = `${150*num_dashboards}px`
+	let dashboardwidth
+	if (document.body.offsetWidth > 1280) {
+		// Gebaseerd op breedte waarop de webpagina het menu links verbergt (regel 46 in https://planbureau.frl/wp-content/themes/fsp/assets/js/functions.js?x80738&ver=6.9.1)
+		// Desktop layout
+		dashboardwidth = '1000px'
+	} else {
+		// Phone en Tablet layouts
+		dashboardwidth = `${$('#dashboard').offsetWidth}px`
+	}
+	
 	for (let dashboard of dashboards) {
 		if (['Vlieland','Terschelling','Ameland','Schiermonnikoog'].includes(regio) && ['Vrijetijd'].includes(dashboard.name)) {
 			continue
 		}
+		$('#themascontainer').style.width = dashboardwidth;
 		$('#themas').innerHTML += `<div class="thema_button" onclick="switch_view('${dashboard.name}')" id="button_${dashboard.name}">${dashboard.caption}</div>`
 		$('#dashboard').innerHTML += `<div class='tableauContainer' id='tableau_${dashboard.name}'>
 			<div class='tableauPlaceholder' id='viz_${dashboard.name}' style='position: relative'>
-				<object class='tableauViz'  style='display:none;width:1000px;height:${dashboard.height+27}px'>
+				<object class='tableauViz'  style='display:none;width:${dashboardwidth};height:${dashboard.height+27}px'>
 					<param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
 					<param name='embed_code_version' value='3' />
 					<param name='path' value='views&#47;${workbookname}&#47;${dashboard.name}?:language=nl-NL&amp;:embed=true&amp;Gemeente=${regio}&amp;:sid=&amp;:redirect=auth' />
@@ -42,7 +53,3 @@ function dashboard_laden(regio, workbookname) {
 	}
 	switch_view(dashboards[0].name)
 }
-
-
-
-
