@@ -1,5 +1,5 @@
 const $ = query => document.querySelector(query), $$ = query => document.querySelectorAll(query)
-const dashboards = [{"name":"Bevolkingsontwikkeling","caption":"Bevolkings-ontwikkeling","height":800},{"name":"Bevolking","caption":"Bevolking","height":600},{"name":"Werk","caption":"Werk","height":1000},{"name":"Inkomen","caption":"Inkomen","height":870},{"name":"Onderwijs","caption":"Onderwijs","height":770},{"name":"Welzijn","caption":"Welzijn","height":760},{"name":"Gezondheid","caption":"Gezondheid","height":880},{"name":"Socialesamenhang","caption":"Sociale samenhang","height":800},{"name":"Veiligheid","caption":"Veiligheid","height":670},{"name":"Bereikbaarheid","caption":"Bereikbaarheid","height":1000},{"name":"Natuurenlandschap","caption":"Natuur en landschap","height":1000},{"name":"Klimaatenmilieu","caption":"Klimaat en milieu","height":760},{"name":"Wonen","caption":"Wonen","height":700},{"name":"Vrijetijd","caption":"Vrije tijd","height":1000}]
+const dashboards = [{"name":"Bereikbaarheid","caption":"Bereikbaarheid","heights":{"Desktop": 1000,"Tablet": 1000,"Phone": 860}},{"name":"Bevolking","caption":"Bevolking","heights":{"Desktop": 600,"Tablet": 600,"Phone": 500}},{"name":"Bevolkingsontwikkeling","caption":"Bevolkings-ontwikkeling","heights":{"Desktop": 800,"Tablet": 800,"Phone": 700}},{"name":"Gezondheid","caption":"Gezondheid","heights":{"Desktop": 880,"Tablet": 880,"Phone": 700}},{"name":"Inkomen","caption":"Inkomen","heights":{"Desktop": 870,"Tablet": 870,"Phone": 650}},{"name":"Klimaatenmilieu","caption":"Klimaat en milieu","heights":{"Desktop": 760,"Tablet": 760,"Phone": 650}},{"name":"Natuurenlandschap","caption":"Natuur en landschap","heights":{"Desktop": 1000,"Tablet": 1000,"Phone": 900}},{"name":"Onderwijs","caption":"Onderwijs","heights":{"Desktop": 770,"Tablet": 770,"Phone": 650}},{"name":"Socialesamenhang","caption":"Sociale samenhang","heights":{"Desktop": 800,"Tablet": 800,"Phone": 650}},{"name":"Veiligheid","caption":"Veiligheid","heights":{"Desktop": 670,"Tablet": 670,"Phone": 700}},{"name":"Vrijetijd","caption":"Vrije tijd","heights":{"Desktop": 1000,"Tablet": 1000,"Phone": 800}},{"name":"Welzijn","caption":"Welzijn","heights":{"Desktop": 760,"Tablet": 760,"Phone": 700}},{"name":"Werk","caption":"Werk","heights":{"Desktop": 1000,"Tablet": 1000,"Phone": 800}},{"name":"Wonen","caption":"Wonen","heights":{"Desktop": 700,"Tablet": 700,"Phone": 700}}]
 
 function switch_view(name) {
 	$$('.active').forEach((node,index) => {node.classList.remove('active')})
@@ -14,14 +14,20 @@ function LidR_setup(regio) {
 function dashboard_laden(regio, workbookname) {
 	const num_dashboards = ['Vlieland','Terschelling','Ameland','Schiermonnikoog'].includes(regio) ? dashboards.length - 1 : dashboards.length
 	$('#themas').style.width = `${150*num_dashboards}px`
-	let dashboardwidth
+	let dashboardwidth,device
 	if (document.body.offsetWidth > 1280) {
 		// Gebaseerd op breedte waarop de webpagina het menu links verbergt (regel 46 in https://planbureau.frl/wp-content/themes/fsp/assets/js/functions.js?x80738&ver=6.9.1)
 		// Desktop layout
 		dashboardwidth = '1000px'
-	} else {
-		// Phone en Tablet layouts
+		device = 'Desktop'
+	} else if (document.body.offsetWidth > 500) {
+		// Tablet layout
 		dashboardwidth = `${$('#dashboard').offsetWidth}px`
+		device = 'Tablet'
+	} else {
+		// Phone layout
+		dashboardwidth = `${$('#dashboard').offsetWidth}px`
+		device = 'Phone'
 	}
 	
 	for (let dashboard of dashboards) {
@@ -32,7 +38,7 @@ function dashboard_laden(regio, workbookname) {
 		$('#themas').innerHTML += `<div class="thema_button" onclick="switch_view('${dashboard.name}')" id="button_${dashboard.name}">${dashboard.caption}</div>`
 		$('#dashboard').innerHTML += `<div class='tableauContainer' id='tableau_${dashboard.name}'>
 			<div class='tableauPlaceholder' id='viz_${dashboard.name}' style='position: relative'>
-				<object class='tableauViz'  style='display:none;width:${dashboardwidth};height:${dashboard.height+27}px'>
+				<object class='tableauViz'  style='display:none;width:${dashboardwidth};height:${dashboard.heights[device]+27}px'>
 					<param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
 					<param name='embed_code_version' value='3' />
 					<param name='path' value='views&#47;${workbookname}&#47;${dashboard.name}?:language=nl-NL&amp;:embed=true&amp;Gemeente=${regio}&amp;:sid=&amp;:redirect=auth' />
