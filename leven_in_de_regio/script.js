@@ -25,12 +25,6 @@ function switch_view(name) {
 	$(`#tableau_${name}`).classList.add('active')
 }
 
-function switch_regio(name,caption) {
-	$$('.regio_button.active').forEach((node,index) => {node.classList.remove('active')})
-	$(`#button_${name}`).classList.add('active')
-	LidR_setup(caption)
-}
-
 function LidR_setup(regio) {
 	dashboard_laden(regio, '20260114LidRDashboard')
 }
@@ -70,15 +64,4 @@ function dashboard_laden(regio, workbookname) {
 		vizElement.parentNode.insertBefore(scriptElement, vizElement);
 	}
 	switch_view(dashboards[0].name)
-}
-
-function regios_laden() {
-	get_layout()
-	const regios = [{'name': 'NWF', 'caption': 'Noordwest Fryslân'}, {'name': 'NOF', 'caption': 'Noordoost Fryslân'}, {'name': 'ZWF', 'caption': 'Zuidwest Fryslân'}, {'name': 'ZOF', 'caption': 'Zuidoost Friesland'}, {'name': 'LWD', 'caption': 'Leeuwarden'}, {'name': 'WAD', 'caption': 'Waddeneilanden'}]
-	$('#regios').style.width = `${150*regios.length}px`
-	$('#regioscontainer').style.width = dashboardwidth
-	for (let regio of regios) {
-		$('#regios').innerHTML += `<div class="regio_button" onclick="$('#themas').innerHTML = ''; $('#dashboard').innerHTML = ''; switch_regio('${regio.name}','${regio.caption}')" id="button_${regio.name}">${regio.caption}</div>`
-	}
-	switch_regio(regios[0].name,regios[0].caption)
 }

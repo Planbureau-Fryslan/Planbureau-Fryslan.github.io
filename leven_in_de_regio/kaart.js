@@ -1,14 +1,24 @@
-let detailniveaus, geo, map, polygonlayers = {}, bounds;
+let detailniveau, geo, map, polygonlayers = {}, bounds;
 const beschikbare_regios = {
 	'Gemeente': 'Alle',
-	'COROP-gebied': ['Zuidoost-Friesland']
+	'Streek': 'Alle'
 }
+
+function clickactions(regio) {
+	if (detailniveau === 'Gemeente') {
+		window.location.href = regio
+	} else if (detailniveau === 'Streek') {
+		window.location.href = 'regio-' + regio
+	}
+}
+
 const fillColors = {
 	'Beschikbaar': {'Standaard': '#4C3D89', 'Hover': '#8D81B7'},
 	'Niet-beschikbaar': {'Standaard': '#e5e7e7', 'Hover': '#eff1f1'}
 }
 
-function kaart_setup() {
+function kaart_setup(det_niveau = 'Gemeente') {
+	detailniveau = det_niveau
 	map = L.map('map', {
 		center: [53.159105, 5.636314],
 		zoom: 10,
@@ -25,15 +35,13 @@ function kaart_setup() {
 	.then(d => d.json())
 	.then(d => {
 		geo = d
-		detailniveaus = Object.keys(geo)
 
 		// Kaart passend maken voor werkelijke data
-		const bbox = calculateBBox(geo[detailniveaus[0]])
+		const bbox = calculateBBox(geo[detailniveau])
 		bounds = [[bbox[1],bbox[0]],[bbox[3],bbox[2]]]
 		map.fitBounds(bounds)
 		
 		// Polygonen toevoegen
-		let detailniveau = 'Gemeente'
 		for (let feature of geo[detailniveau]) {
 			feature.properties.available = beschikbare_regios[detailniveau] == 'Alle' || beschikbare_regios[detailniveau].includes(feature.properties.regio_label)
 		}
@@ -48,7 +56,7 @@ function kaart_setup() {
 				}
 			}
 		})
-		polygonlayers[detailniveaus[0]].addTo(map)
+		polygonlayers[detailniveau].addTo(map)
 	})
 }
 
@@ -83,7 +91,7 @@ function addFeatureActions(feature, layer) {
 	if (feature.properties && feature.properties.regio_label) {
 		// Shape aanklikken -> Naar pagina voor die regio
 		if (feature.properties.available) {
-			layer.on('click', () => window.location.href = feature.properties.regio_label.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ /g,'-').toLowerCase() )
+			layer.on('click', () => clickactions(feature.properties.regio_label.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ /g,'-').toLowerCase()))
 		}
 		// Muis over shape -> Regionaam in tooltip
 		layer.on('mouseover', () => {

@@ -2,16 +2,16 @@ h2 {
 	color: #4C3D89;
 }
 
-#themascontainer, #regioscontainer {
+#themascontainer {
 	box-sizing: border-box;
 	width: 1000px;
 	overflow-x: scroll;
 }
-#themas, #regios {
+#themas {
 	display: flex;
 	align-items: center;
 }
-.thema_button, .regio_button {
+.thema_button {
 	box-sizing: border-box;
 	background-color: #8D81B7;
 	color: white;
@@ -25,7 +25,7 @@ h2 {
 	display: inline-block;
 	padding: 10px;
 }
-.thema_button.active, .regio_button.active {
+.thema_button.active {
 	background-color: #4C3D89;
 }
 
