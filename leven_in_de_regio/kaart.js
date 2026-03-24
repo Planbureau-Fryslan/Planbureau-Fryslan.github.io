@@ -8,7 +8,11 @@ function clickactions(regio) {
 	if (detailniveau === 'Gemeente') {
 		window.location.href = regio
 	} else if (detailniveau === 'Streek') {
-		window.location.href = 'regio-' + regio
+		if (regio == 'leeuwarden') {
+			window.open('https://planbureau.frl/gemeente/leeuwarden', '_top')
+		} else {
+			window.open('https://planbureau.frl/gemeente/regio-' + regio, '_top')
+		}
 	}
 }
 
