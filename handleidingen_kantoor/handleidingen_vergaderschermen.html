@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Handleiding vergaderschermen</title>
+	<script>
+		function $(selector) {
+			return document.querySelector(selector)
+		}
+		function $$(selector) {
+			return document.querySelectorAll(selector)
+		}
+		function refresh() {
+			room = $('#roomselector').value
+			console.log('room',room)
+			platform = $('#deviceselector').value
+			console.log('platform',platform)
+			
+			for (element of $$('.room')) {
+				element.style.display = ''
+			}
+			for (element of $$('.platform')) {
+				element.style.display = ''
+			}
+			
+			if (room != 'none' && platform != 'none') {
+				$(`#${room}`).style.display = 'block'
+		
+				for (element of $$(`.platform_${platform}`)) {
+					element.style.display = 'block'
+				}
+			}
+		}
+
+		function setup() {
+			let params = new URLSearchParams(document.location.search);
+			let room = params.get('room');
+			if (room) {
+				$('#roomselector').value = room
+			}
+			let platform = params.get('platform');
+			if (platform) {
+				$('#deviceselector').value = platform
+			}
+			refresh()
+		}
+	</script>
+	<style>
+		body {
+			font-family: Sora, Arial;
+		}
+		.platform, .room {
+			display: none;
+		}
+	</style>
+</head>
+<body onload="setup()">
+	<h1>Handleiding vergaderschermen</h1>
+	<label for="roomselector">Selecteer een vergaderscherm:</label>
+	<select name="room" id="roomselector" oninput="refresh()">
+		<option value="none">-- Kies een ruimte --</option>
+		<option value="wyn">It Wynskerm</option>
+		<option value="sinne">De Sinne Skerm</option>
+	</select>
+	<br>
+	<label for="deviceselector">Welk besturingssysteem gebruik je op je laptop?</label>
+	<select name="device" id="deviceselector" oninput="refresh()">
+		<option value="none">-- Kies een OS --</option>
+		<option value="macos">MacOS</option>
+		<option value="windows">Windows</option>
+	</select>
+	<div class="room" id="sinne">
+		<h2>De Sinne Skerm</h2>
+		<p>Als je met het scherm in <b>1.6 De Sinne</b> wilt deelnemen aan een Teams vergadering, nodig dan bij Locatie <b>De Sinne Skerm</b> uit. De uitnodiging wordt automatisch geaccepteerd.</p>
+		<p>Op het scherm is de afspraak dan automatisch zichtbaar en je hoeft dan alleen nog maar op 'Deelnemen' te klikken.</p>
+		<p>Als je alleen je laptopscherm wilt delen op het grote scherm, hoef je geen Teamsvergadering aan te maken.</p>
+		<h3>Scherm</h3>
+		<p>Aanzetten d.m.v. de Aan knop linksonder op het scherm. Opstarten duurt even. Om het scherm uit te zetten druk je op de Aan/uit knop linksonder of 2 keer op de rode powerknop op de zwarte afstandbediening.</p>
+		<p>Als er een blokje met de tekst ‘NO SIGNAL’ over het scherm gaat, moet je even op het scherm tikken om de Teams-omgeving wakker te maken.</p>
+		<h3>Dongle</h3>
+		<p>Er ligt een dongle waarmee je je scherm van de laptop kunt laten zien op het scherm (en kunt delen via Teams).</p>
+		<img src="./Dongle_Sinne.jpg">
+		<p>Als je deze aansluit opent na korte tijd het menu voor de ClickShare Button. Mocht dat niet gebeuren, kun je in de <span class="platform platform_windows">Windows-verkenner naar de externe schijf <b>ClickShare</b> gaan en <b>ClickShare_for_Windows</b></span><span class="platform platform_macos">Finder naar de externe schijf <b>ClickShare</b> gaan en <b>ClickShare_for_MacOSX</b></span> openen.</p>
+		<img src="ClickShareVenster_Sinne.png">
+		<p>Vervolgens kun je in het venster van ClickShare kiezen of je het hele scherm wilt delen of een bepaald venster. Door vervolgens op het witte cirkeltje te klikken, deel je het scherm. Op de grote knop op de dongle drukken werkt ook.</p>
+	</div>
+	<div class="room" id="wyn">
+		<h2>It Wynskerm</h2>
+		<p>Als je met het scherm in <b>0.1 De Wyn</b> wilt deelnemen aan een Teams-vergadering, nodig dan bij Locatie <b>It Wynskerm</b> uit. De uitnodiging wordt automatisch geaccepteerd.</p>
+		<p>Op het scherm en het bedieningspaneel is de afspraak dan automatisch zichtbaar en je hoeft dan alleen nog maar op 'Deelnemen' te klikken. Je hoeft niet met je laptop deel te nemen aan de vergadering.</p>
+		<p>Als je alleen je laptopscherm wilt delen op het grote scherm, hoef je geen Teamsvergadering aan te maken.</p>
+		<h3>Scherm</h3>
+		<p>Je kunt het systeem wakker maken door op het bedieningspaneeltje te tikken. Het tv-scherm gaat automatisch aan.</p>
+		<p>Uitschakelen kan met de aan/uit-knop op de afstandbediening van de tv (groene knop rechtsboven).</p>
+		<h3>Dongle</h3>
+		<p>Bij het scherm ligt een dongle waarmee je het scherm van je laptop kunt laten zien op het scherm (en kunt delen via Teams).</p>
+		<p>Als je deze in je laptop inplugt, kan het zijn dat je scherm direct gedeeld wordt.</p>
+		<p>Als het lichtje op de dongle langzaam groen in- en uitfade, kun je op de knop op de dongle klikken en wordt je scherm gedeeld.</p>
+		<img src="Dongle_Wyn.png">
+		<p class="platform platform_macos">Het kan zijn dat je deze melding krijgt:</p>
+		<img class="platform platform_macos" src="MacOS_Verbinding toestaan_Wyn.png">
+		<p class="platform platform_macos">Hier kun je op 'Sta toe' klikken.</p>
+		<p class="platform platform_windows">Als onderstaand venster opent, kun je op 'Press to share' klikken om je scherm te delen.</p>
+		<img class="platform platform_windows" src="Yealink Wireless Presentation Pod.png">
+		<p class="platform platform_windows">Mocht deze niet automatisch starten, ga dan in de Verkenner naar de externe schijf <b>Yealink Pod</b> en open <b>PresentationLauncher</b>.</p>
+		<h3 class="platform platform_macos">Airplay</h3>
+		<p class="platform platform_macos">Het tv-scherm ondersteunt ook Airplay. De tv heet <b>SONY FW-75BZ30L</b></p>
+	</div>
+</body>
+</html>
