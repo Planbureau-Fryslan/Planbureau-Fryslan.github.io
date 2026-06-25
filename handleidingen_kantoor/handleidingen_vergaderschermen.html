@@ -11,25 +11,29 @@
 		function $$(selector) {
 			return document.querySelectorAll(selector)
 		}
-		function refresh() {
-			room = $('#roomselector').value
-			console.log('room',room)
-			platform = $('#deviceselector').value
-			console.log('platform',platform)
-			
-			for (element of $$('.room')) {
-				element.style.display = ''
+		let selected_room = null, selected_os = null;
+		function refresh(room,os) {
+			if (room) {
+				selected_room = room
 			}
-			for (element of $$('.platform')) {
-				element.style.display = ''
+			if (os) {
+				selected_os = os
 			}
-			
-			if (room != 'none' && platform != 'none') {
-				$(`#${room}`).style.display = 'block'
-		
-				for (element of $$(`.platform_${platform}`)) {
-					element.style.display = 'block'
-				}
+			let button_only = !selected_room || !selected_os
+			button_only = false
+			switch_view('.room', `.room_${selected_room}`, button_only)
+			switch_view('.os', `.os_${selected_os}`, button_only)
+		}
+
+		function switch_view(typeselector, groupselector, button_only) {
+			for (element of $$(`${typeselector}`)) {
+				element.classList.remove('active')
+			}
+			if (button_only) {
+				groupselector = `button${groupselector}`
+			}
+			for (element of $$(`${groupselector}`)) {
+				element.classList.add('active')
 			}
 		}
 
@@ -37,40 +41,61 @@
 			let params = new URLSearchParams(document.location.search);
 			let room = params.get('room');
 			if (room) {
-				$('#roomselector').value = room
+				selected_room = room
 			}
-			let platform = params.get('platform');
-			if (platform) {
-				$('#deviceselector').value = platform
+			let os = params.get('os');
+			if (os) {
+				selected_os = os
 			}
-			refresh()
+			refresh(room, os)
 		}
 	</script>
 	<style>
 		body {
 			font-family: Sora, Arial;
+			background-color: #F7D76D;
 		}
-		.platform, .room {
+		button {
+			width: 50%;
+			max-width: 150px;
+			height: 50px;
+			background-color: #8D81B7;
+			border: 1px;
+			font-size: 1em;
+			color: white;
+		}
+		button.first {
+			border-radius: 10px 0 0 10px;
+		}
+		button.last {
+			border-radius: 0 10px 10px 0;
+		}
+		button.active {
+			background-color: #4C3D89;
+		}
+		div.room,
+		div.room .os {
 			display: none;
+		}
+		div.room.active,
+		div.room.active .os.active {
+			display: block;
+		}
+		div.room.active span.os.active {
+			display: inline;
+		}
+		img {
+			max-width: 100%;
 		}
 	</style>
 </head>
 <body onload="setup()">
 	<h1>Handleiding vergaderschermen</h1>
-	<label for="roomselector">Selecteer een vergaderscherm:</label>
-	<select name="room" id="roomselector" oninput="refresh()">
-		<option value="none">-- Kies een ruimte --</option>
-		<option value="wyn">It Wynskerm</option>
-		<option value="sinne">De Sinne Skerm</option>
-	</select>
-	<br>
-	<label for="deviceselector">Welk besturingssysteem gebruik je op je laptop?</label>
-	<select name="device" id="deviceselector" oninput="refresh()">
-		<option value="none">-- Kies een OS --</option>
-		<option value="macos">MacOS</option>
-		<option value="windows">Windows</option>
-	</select>
-	<div class="room" id="sinne">
+	<p style="margin-bottom: 0;">Selecteer een vergaderscherm:</p>
+	<button onclick="refresh('wyn',null)" class="first room room_wyn">It Wynskerm</button><button onclick="refresh('sinne',null)" class="last room room_sinne">De Sinne Skerm</button>
+	<p style="margin-bottom: 0">Welk besturingssysteem gebruik je op je laptop?</p>
+	<button onclick="refresh(null,'macos')" class="first os os_macos">MacOS</button><button onclick="refresh(null,'windows')" class="last os os_windows">Windows</button>
+	<div class="room room_sinne" id="sinne">
 		<h2>De Sinne Skerm</h2>
 		<p>Als je met het scherm in <b>1.6 De Sinne</b> wilt deelnemen aan een Teams vergadering, nodig dan bij Locatie <b>De Sinne Skerm</b> uit. De uitnodiging wordt automatisch geaccepteerd.</p>
 		<p>Op het scherm is de afspraak dan automatisch zichtbaar en je hoeft dan alleen nog maar op 'Deelnemen' te klikken.</p>
@@ -80,12 +105,12 @@
 		<p>Als er een blokje met de tekst ‘NO SIGNAL’ over het scherm gaat, moet je even op het scherm tikken om de Teams-omgeving wakker te maken.</p>
 		<h3>Dongle</h3>
 		<p>Er ligt een dongle waarmee je je scherm van de laptop kunt laten zien op het scherm (en kunt delen via Teams).</p>
-		<img src="./Dongle_Sinne.jpg">
-		<p>Als je deze aansluit opent na korte tijd het menu voor de ClickShare Button. Mocht dat niet gebeuren, kun je in de <span class="platform platform_windows">Windows-verkenner naar de externe schijf <b>ClickShare</b> gaan en <b>ClickShare_for_Windows</b></span><span class="platform platform_macos">Finder naar de externe schijf <b>ClickShare</b> gaan en <b>ClickShare_for_MacOSX</b></span> openen.</p>
+		<img src="./Dongle_Sinne.png">
+		<p>Als je deze aansluit opent na korte tijd het menu voor de ClickShare Button. Mocht dat niet gebeuren, <span class="os os_null">dan moet de applicatie handmatig gestart worden. Kies bovenaan deze pagina het besturingssysteem van je laptop voor instructies.</span><span class="os os_windows os_macos">kun je in de <span class="os os_windows">Windows-verkenner naar de externe schijf <b>ClickShare</b> gaan en <b>ClickShare_for_Windows</b></span><span class="os os_macos">Finder naar de externe schijf <b>ClickShare</b> gaan en <b>ClickShare_for_MacOSX</b></span> openen.</span></p>
 		<img src="ClickShareVenster_Sinne.png">
 		<p>Vervolgens kun je in het venster van ClickShare kiezen of je het hele scherm wilt delen of een bepaald venster. Door vervolgens op het witte cirkeltje te klikken, deel je het scherm. Op de grote knop op de dongle drukken werkt ook.</p>
 	</div>
-	<div class="room" id="wyn">
+	<div class="room room_wyn" id="wyn">
 		<h2>It Wynskerm</h2>
 		<p>Als je met het scherm in <b>0.1 De Wyn</b> wilt deelnemen aan een Teams-vergadering, nodig dan bij Locatie <b>It Wynskerm</b> uit. De uitnodiging wordt automatisch geaccepteerd.</p>
 		<p>Op het scherm en het bedieningspaneel is de afspraak dan automatisch zichtbaar en je hoeft dan alleen nog maar op 'Deelnemen' te klikken. Je hoeft niet met je laptop deel te nemen aan de vergadering.</p>
@@ -98,14 +123,14 @@
 		<p>Als je deze in je laptop inplugt, kan het zijn dat je scherm direct gedeeld wordt.</p>
 		<p>Als het lichtje op de dongle langzaam groen in- en uitfade, kun je op de knop op de dongle klikken en wordt je scherm gedeeld.</p>
 		<img src="Dongle_Wyn.png">
-		<p class="platform platform_macos">Het kan zijn dat je deze melding krijgt:</p>
-		<img class="platform platform_macos" src="MacOS_Verbinding toestaan_Wyn.png">
-		<p class="platform platform_macos">Hier kun je op 'Sta toe' klikken.</p>
-		<p class="platform platform_windows">Als onderstaand venster opent, kun je op 'Press to share' klikken om je scherm te delen.</p>
-		<img class="platform platform_windows" src="Yealink Wireless Presentation Pod.png">
-		<p class="platform platform_windows">Mocht deze niet automatisch starten, ga dan in de Verkenner naar de externe schijf <b>Yealink Pod</b> en open <b>PresentationLauncher</b>.</p>
-		<h3 class="platform platform_macos">Airplay</h3>
-		<p class="platform platform_macos">Het tv-scherm ondersteunt ook Airplay. De tv heet <b>SONY FW-75BZ30L</b></p>
+		<p class="os os_macos">Het kan zijn dat je deze melding krijgt:</p>
+		<img class="os os_macos" src="MacOS_Verbinding toestaan_Wyn.png">
+		<p class="os os_macos">Hier kun je op 'Sta toe' klikken.</p>
+		<p class="os os_windows">Als onderstaand venster opent, kun je op 'Press to share' klikken om je scherm te delen.</p>
+		<img class="os os_windows" src="Yealink Wireless Presentation Pod.png">
+		<p class="os os_windows">Mocht deze niet automatisch starten, ga dan in de Verkenner naar de externe schijf <b>Yealink Pod</b> en open <b>PresentationLauncher</b>.</p>
+		<h3 class="os os_macos">Airplay</h3>
+		<p class="os os_macos">Het tv-scherm ondersteunt ook Airplay. De tv heet <b>SONY FW-75BZ30L</b></p>
 	</div>
 </body>
 </html>
